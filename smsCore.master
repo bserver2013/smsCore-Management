@@ -1,0 +1,119 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="smsCore.master.cs" Inherits="smsCore" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="kingpauloaquino@mail.com" />
+    <meta name="keywords" content="cms, windows 8, modern style, Metro UI, style, modern, css, framework" />
+
+    <link href="management/css/modern.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="images/Visualpharm-Icons8-Metro-Style-Management-Statistics.ico" />
+   	<link href="management/css/mystyle.css" rel="stylesheet" />
+    <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="js/modern/dropdown.js"></script>
+    	
+	<!-- Google WebFonts -->
+	<link href='http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic' rel='stylesheet' type='text/css' />
+	<script type='text/css' src='javascripts/admin/modernizr-1.7.min.js'></script>
+	<script type="text/javascript" src="js/cms_script.js"></script>
+	<script type="text/javascript" src="js/customPaging.js"></script>
+    <title>SMSLauncher Management | Metro Style</title>
+    <asp:ContentPlaceHolder id="head" runat="server"></asp:ContentPlaceHolder>
+</head>
+<body class="metrouicss">
+    <form id="form1" runat="server">
+    <div>
+        <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+        <div class="nav-bar">
+            <div class="nav-bar-inner padding10">
+                <span class="pull-menu"></span>
+
+                <a href="#" target="_blank"><span class="element brand">
+                    <!-- <img class="place-left" src="images/logo32.png" style="height: 20px"/> -->
+                    SMSLauncher Management <small>1.0.0</small>
+                </span></a>
+
+                <div class="divider"></div>
+                <ul class="menu">
+                    <li><a href="dashboard.aspx">Dashbaord</a></li>
+                    <li data-role="dropdown">
+                        <a href="#">Users</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="users.aspx">Users Management</a></li>
+            		        <li><a href="add_users.aspx">Add User</a></li>
+                        </ul>
+                    </li>
+                    <li data-role="dropdown"><a href="#">Member</a>
+                        <ul class="dropdown-menu">
+                	        <li><a href="members.aspx">Members Management</a></li>
+            		        <li><a href="add_member.aspx">Add Member</a></li>
+                        </ul>
+                    </li>
+                    <li data-role="dropdown"><a href="#">Bayanihan</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="bayanihan_damayan.aspx">Damayan</a></li>
+                            <li class="divider"></li>
+                            <li><a href="collect_funds.aspx">Collect Funds</a></li>
+                	        <li><a href="transfer_funds.aspx">Transfer Funds</a></li>
+                            <li><a href="transfer_funds_reports.aspx">Transfer Funds Report</a></li>
+                        </ul>
+                    </li>
+                    <li data-role="dropdown"><a href="#">SMS</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="write_msg.aspx">Write Message</a></li>
+                            <li><a href="inbox.aspx">Inbox</a></li>
+                            <li><a href="sent_items.aspx">Sent items</a></li>
+                            <li class="divider"></li>
+                	        <li><a href="keywords.aspx">Keywords Management</a></li>
+                            <li><a href="sms_broadcast.aspx">SMS Broadcast</a></li>
+                        </ul>
+                    </li>
+			        <li data-role="dropdown"><a href="#">System Settings</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="notifications_msg.aspx">Notifications Message</a></li>
+            		        <li><a href="footer_msg.aspx">Footers Message</a></li>
+                        </ul>
+         	        </li>
+                </ul>
+
+                <div id="user_account">
+                    <div class="nav-bar-inner">
+                        <ul class="menu">
+                             <li data-role="dropdown">
+                                 <a href="#">
+                                    <img src="management/images/Emoticons-Wink-icon.png" alt="Avatar" id="imgUser" runat="server" />
+                                    <asp:Label ID="lblUsers" runat="server"></asp:Label>
+                                 </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="activity_log.aspx">Activity Log</a></li>
+            		                <li><a href="account.aspx">Account Settings</a></li>
+            		                <li class="divider"></li>
+            		                <li><a href="logout/" >Logout</a></li>
+                                </ul>
+         	                </li>
+                        </ul>
+                    </div>
+                </div>
+                    
+            </div>
+        </div>
+
+        <div id="content">
+             <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server"> </asp:ContentPlaceHolder>
+        </div>
+       
+         <%--footer--%>
+        <div id="footer">
+            <div class="container">
+                <div class="left">SMSLauncher Management &copy; <% Response.Write(DateTime.Now.Year); %></div>
+                <div class="right">Developed by <a href="http://facebook.com/kingpauloaquino" target="_blank"> KING PAULO AQUINO (iPaopaoworx) </a></div>
+            </div>
+        </div>
+    </div>
+    </form>
+</body>
+</html>
