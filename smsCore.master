@@ -22,6 +22,7 @@
 	<script type="text/javascript" src="js/cms_script.js"></script>
 	<script type="text/javascript" src="js/customPaging.js"></script>
     <title>SMSLauncher Management | Metro Style</title>
+    <link href="management/css/bootstrap-combined.min.css" rel="stylesheet">
     <asp:ContentPlaceHolder id="head" runat="server"></asp:ContentPlaceHolder>
 </head>
 <body class="metrouicss">
@@ -108,10 +109,36 @@
        
          <%--footer--%>
         <div id="footer">
-            <div class="container">
-                <div class="left">SMSLauncher Management &copy; <% Response.Write(DateTime.Now.Year); %></div>
-                <div class="right">Developed by <a href="http://facebook.com/kingpauloaquino" target="_blank"> KING PAULO AQUINO (iPaopaoworx) </a></div>
+                <div class="container">
+                    <div class="left">SMSLauncher Management &copy; <% Response.Write(DateTime.Now.Year); %></div>
+                    <div class="right">Developed by <a href="#"  class="shower" data-source="#showme"> KING PAULO AQUINO (iPaopaoworx) </a></div>
+                </div>
             </div>
+
+            <div id="showme" class="modal hide fade">
+	          <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    <img src="images/delete-icon.png" />
+                </button>
+		        <h3>System Developer</h3>
+	          </div>
+	          <div class="modal-body">
+		        <h3>Profile</h3>
+	          </div>
+	          <div class="modal-footer">
+                   <asp:LinkButton class="btn" ID="lbSend" runat="server">Proceed</asp:LinkButton>
+		           <a href="#" class="btn" data-dismiss="modal">No</a>
+	          </div>
+	        </div>
+	        <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	        <script type="text/javascript">
+	            $(document).ready(function () {
+	                $('.shower').click(function (event) {
+	                    var id = $(this).attr('data-source');
+	                    $(id).modal('toggle');
+	                });
+	            });
+	        </script>
         </div>
     </div>
     </form>

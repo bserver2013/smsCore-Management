@@ -103,7 +103,7 @@
                     </tr>
                     <tr>
                         <td>Processors:</td>
-                        <td><% Response.Write(hardwareController.NumberOfProcessors + " | " + hardwareController.NumberOfLogicalProcessors + " / " + hardwareController.NumberOfCores); %></td>
+                        <td><% Response.Write(hardwareController.NumberOfProcessors + "-" + hardwareController.NumberOfLogicalProcessors + " / " + hardwareController.NumberOfCores); %></td>
                     </tr>
                     <tr>
                         <td>Max Clock Speed:</td>
@@ -121,7 +121,7 @@
                     <tr>
                         <td>Free Memory:</td>
                         <td>
-                            <% Response.Write(hardwareController.MemoryUsaged()); %>
+                           Memory <%--<% Response.Write(hardwareController.MemoryUsaged()); %>--%>
                         </td>
                     </tr>
                 </table>

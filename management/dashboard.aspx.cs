@@ -22,7 +22,7 @@ public partial class dashboard : System.Web.UI.Page
         hardwareController.loadCPU();
         lblCpuName.Text = hardwareController.CpuName;
         lblCpuName2.Text = hardwareController.CpuName;
-        lblCpuUsaged.Text = hardwareController.CpuUsaged();
+        //lblCpuUsaged.Text = hardwareController.CpuUsaged();
     }
 
     public static DateTime GetLastSystemShutdown()
