@@ -23,6 +23,8 @@ public class sqlServer
 
     static SMSDataClassesDataContext db = new SMSDataClassesDataContext();
 
+    static objectColumnList objList;
+
     static bool Open()
     {
         sqlCon = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["SMSDatabaseConnectionString"].ConnectionString);
@@ -31,8 +33,8 @@ public class sqlServer
             if (!IsOpen)
             {
                 sqlCon.Open();
-                return true;
             }
+            return true;
         }
         catch (Exception ex)
         {}
@@ -130,6 +132,33 @@ public class sqlServer
         catch (Exception ex)
         {}
         return x + 1;
+    }
+
+    public static objectColumnList Select(string query, int[] index)
+    {
+        Open();
+        objList = new objectColumnList();
+        using (SqlCommand sqlCom = new SqlCommand(query, sqlCon))
+        {
+            using (SqlDataReader sqlDr = sqlCom.ExecuteReader())
+            {
+                try
+                {
+                    while (sqlDr.Read())
+                    {
+                        objectColumn l = new objectColumn();
+                        for (int i = 0; i < index.Length; i++)
+                        {
+                            l.sqlDr[i] = sqlDr[i].ToString();
+                        }
+                        objList.Add(l);
+                    }
+                }
+                catch (Exception ex)
+                { }
+            }
+        }
+        return objList;
     }
 
     public static bool Update(string command)

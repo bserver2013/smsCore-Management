@@ -8,15 +8,14 @@ using System.Web;
 /// </summary>
 public class balance
 {
-	public balance()
-	{
-		//
-		// TODO: Add constructor logic here
-		//
-	}
+    public balance()
+    {
+        //
+        // TODO: Add constructor logic here
+        //
+    }
 
     static SMSDataClassesDataContext db;
-    static bool isNotExist = false;
 
     static long id(string account)
     {
@@ -41,24 +40,44 @@ public class balance
     public static double current_amount(string account)
     {
         db = new SMSDataClassesDataContext();
-        var acnt = (from i in db.SMS_eMoneys.Where(i => i.ID == id(account)) select i).Take(1).FirstOrDefault();
-        if (acnt != null)
-        {
-            isNotExist = true;
-            return (double)acnt.Amount;
+        var acnt =
+
+            (
+                from d in db.SMS_VirtualMoneys.Where(d => d.type == 21 && d.account == account)
+                select d.amount
+            ).Sum() -
+            (
+                from d in db.SMS_VirtualMoneys.Where(d => d.type == 22 && d.account == account)
+                select d.amount
+            ).Sum();
+
+        return (double)acnt;
+    }
+
+    public static bool Transaction(string account, string referenceNo, decimal amount, bool IsDeposit, int status)
+    {
+        db = new SMSDataClassesDataContext();
+        SMS_VirtualMoney vMoney = new SMS_VirtualMoney();
+
+        vMoney.refno = referenceNo;
+        vMoney.account = account;
+        if (IsDeposit){
+            vMoney.type = 21;
         }
-        isNotExist = false;
-        return 0;
-    }
-
-    public static double deduct(string account, double amount)
-    {
-        return current_amount(account) - amount;
-    }
-
-    public static double increase(string account, double amount)
-    {
-        return current_amount(account) + amount;
+        else{
+            vMoney.type = 22;
+        }
+        vMoney.amount = amount;
+        vMoney.status = status;
+        vMoney.datetime = config.current_DateTime();
+        try{
+            db.SMS_VirtualMoneys.InsertOnSubmit(vMoney);
+            db.SubmitChanges();
+            return true;
+        }
+        catch (Exception ex){
+        }
+        return false;
     }
 
     public static double IsQualified(string account)
@@ -69,23 +88,7 @@ public class balance
     public static string check(string account)
     {
         string total = config.format_currency((decimal)current_amount(account));
-        if (isNotExist)
-        {
-            process.save(account, reply("OK").Replace("[AMOUNT]", total) + " " + DateTime.Now.ToLongDateString());
-        }
-        else
-        {
-            process.save(account, reply("NOK"));
-        }
+        process.save(account, reply("OK").Replace("[AMOUNT]", total) + " " + DateTime.Now.ToLongDateString());
         return "OK";
-    }
-
-    public static bool update(string account, double amount)
-    {
-        if (sqlServer.Update("UPDATE SMS_eMoney SET Amount = '" + amount + "' WHERE Account = '" + account + "' AND Status = 'True';"))
-        {
-            return true;
-        }
-        return false;
     }
 }

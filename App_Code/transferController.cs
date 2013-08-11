@@ -16,27 +16,9 @@ public class transfer
 	}
 
     static SMSDataClassesDataContext db;
-
-    static string sender = string.Empty;
-    static string Sender
-    {
-        get { return sender; }
-        set { sender = value; }
-    }
-
-    static string receiver = string.Empty;
-    static string Receiver
-    {
-        get { return receiver; }
-        set { receiver = value; }
-    }
-
-    static string refNo = string.Empty;
-    static string ReferenceNo
-    {
-        get { return refNo; }
-        set { refNo = value; }
-    }
+    static string Sender { get; set; }
+    static string Receiver { get; set; }
+    static string ReferenceNo { get; set; }
 
     static string reply(string tag, string status)
     {
@@ -104,23 +86,19 @@ public class transfer
             if (IsSender_Exist(Receiver))
             {
                 double d = Convert.ToDouble(split[2]);
-                ReferenceNo = config.generateReferenceNo(6);
+                ReferenceNo = config.current_DateTime().ToString("MMdd") + config.generateReferenceNo(4);
 
                 if (balance.current_amount(number) >= d)
                 {
                     if (!IsRef_Exist(ReferenceNo))
                     {
-                        balance.update(Sender, balance.deduct(Sender, d));
-                        if (save("sender", (decimal)d, ReferenceNo))
-                        {
-                            report("sender", d.ToString());
-                        }
+                        // Widthraw from sender
+                        balance.Transaction(Sender, ReferenceNo, (decimal)d, false, 23);
+                        save("sender", (decimal)d, ReferenceNo);
 
-                        balance.update(Receiver, balance.increase(Receiver, d));
-                        if (save("receiver", (decimal)d, ReferenceNo))
-                        {
-                            report("receiver", ReferenceNo);
-                        }
+                        // Deposit to receiver
+                        balance.Transaction(Receiver, ReferenceNo, (decimal)d, true, 23);
+                        save("receiver", (decimal)d, ReferenceNo);
                     }
                 }
                 else

@@ -6,6 +6,5 @@ using System.Web;
 /// <summary>
 /// Summary description for messageList
 /// </summary>
-public class messageList : List<message>
-{
-}
+public class objectList : List<objectName> { }
+public class objectColumnList : List<objectColumn> { }

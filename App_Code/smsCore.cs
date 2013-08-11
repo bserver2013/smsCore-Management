@@ -23,28 +23,28 @@ public class smsCore_api : System.Web.Services.WebService {
     }
 
     [WebMethod(Description = "Send an SMS without validation")]
-    public bool sendMethodWithoutValidation(string number, string message)
+    public bool sendMethodWithoutValidation(string number, string message, string launcher_id)
     {
-        return receivedMessage.save(number, message);
+        return receivedMessage.save(number, message, launcher_id);
     }
 
     [WebMethod(Description = "Send an SMS with validation")]
-    public bool sendMethodWithValidation(string number, string message)
+    public bool sendMethodWithValidation(string number, string message, string launcher_id)
     {
-        return receivedMessage.save(number, message, true);
+        return receivedMessage.save(number, message, launcher_id, true);
     }
 
     [WebMethod(Description = "Get all message to be sent")]
-    public messageList GetAllMessage()
+    public objectList GetAllMessage()
     {
         db = new SMSDataClassesDataContext();
-        messageList l = new messageList();
+        objectList l = new objectList();
         var que = (from i in db.SMS_QueuedBoxes.Where(i => i.Status == false) select i).ToList();
         if (que != null)
         {
             foreach (var q in que)
             {
-                message c = new message();
+                objectName c = new objectName();
                 c.Id = q.ID;
                 c.Number = q.Number;
                 c.Message = config.decrypt(q.Message);

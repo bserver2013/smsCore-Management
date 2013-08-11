@@ -17,19 +17,8 @@ public class donation
 
     static SMSDataClassesDataContext db;
 
-    static string number_combination = string.Empty;
-    static string Combination
-    {
-        get { return number_combination; }
-        set { number_combination = value; }
-    }
-
-    static double donation_amount = 0;
-    static double Donation
-    {
-        get { return donation_amount; }
-        set { donation_amount = value; }
-    }
+    static string Combination { get; set; }
+    static double Donation { get; set; }
 
     static string reply(string status)
     {
@@ -90,10 +79,7 @@ public class donation
         try
         {
             var x = (from i in db.SMS_Bayanihans.Where(i => i.bayanihan_ref == bayanihanRef) select i).Count();
-            if (x != null)
-            {
-                return x;
-            }
+            return x;
         }
         catch (Exception ex)
         { }
@@ -106,10 +92,7 @@ public class donation
         try
         {
             var x = (from i in db.SMS_Bayanihans.Where(i => i.bayanihan_ref == bayanihanRef) select i.donation).Sum();
-            if (x != null)
-            {
-                return (decimal)x;
-            }
+            return (decimal)x;
         }
         catch (Exception ex)
         { }
@@ -132,7 +115,7 @@ public class donation
             string[] y = x[1].Split('/');
             Donation = Convert.ToDouble(y[0]);
             Combination = y[1];
-            string refCode = config.current_DateTime().ToString("MMdd") + sqlServer.Count("SMS_Bayanihan", "Id").ToString() + config.generateReferenceNo(5);
+            string refCode = config.current_DateTime().ToString("MMdd") + config.generateReferenceNo(4);
             
             if (balance.current_amount(number) >= Donation)
             {
@@ -153,9 +136,8 @@ public class donation
                     sqlServer.Update("UPDATE SMS_BayanihanSum SET played = '" + count_donators(bayanihan) + "', " +
                                 "donation = '" + total_donation(bayanihan) + "' " +
                                 "WHERE bayanihan_ref = '" + bayanihan + "' AND status = 'Open';");
-                    double bal = balance.deduct(number, Donation);
 
-                    balance.update(number, bal);
+                    balance.Transaction(number, refCode, (decimal)Donation, false, 24);
                     process.save(number, reply("OK").Replace("[AMOUNT]", Donation.ToString()).Replace("[COMBINATION]", Combination).Replace("[BALANCE]", config.format_currency((decimal)balance.current_amount(number))).Replace("[REFNO]", refCode));
                     return "OK";
                 }

@@ -38,7 +38,7 @@ public class process
         set { _message = value; }
     }
 
-    public static bool now()
+    public static bool now(string launcher_id)
     {
         db = new SMSDataClassesDataContext();
         try
@@ -55,7 +55,7 @@ public class process
                         delete(receivedMsg.Id);
                         break;
                     default:
-                        keyword.check(receivedMsg.Sender, receivedMsg.Message);
+                        keyword.check(receivedMsg.Sender, receivedMsg.Message, launcher_id);
                         delete(receivedMsg.Id);
                         break;
                 }

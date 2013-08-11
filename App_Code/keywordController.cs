@@ -15,10 +15,10 @@ public class keyword
 		//
 	}
 
-    public static string check(string number, string input)
+    public static string check(string number, string input, string launcher_id)
     {
         string returnMsg = "Oops, please check your keyword, then try again! thank you...";
-        returnMsg = help(number, input);
+        returnMsg = help(number, input, launcher_id);
         if (returnMsg == "Null")
         {
             process.save(number, returnMsg);
@@ -27,7 +27,7 @@ public class keyword
         return "OK";
     }
 
-    static string help(string number, string input)
+    static string help(string number, string input, string launcher_id)
     {
         string returnMsg = "Null";
         switch (input)
@@ -68,13 +68,13 @@ public class keyword
                 returnMsg = forecast.consume("http://weather.yahooapis.com/forecastrss?w=");
                 break;
             default:
-                returnMsg = internal_keyword(number, input);
+                returnMsg = internal_keyword(number, input, launcher_id);
                 break;
         }
         return returnMsg;
     }
 
-    static string internal_keyword(string number, string input)
+    static string internal_keyword(string number, string input, string launcher_id)
     {
         string returnMsg = "Null";
 
@@ -91,7 +91,7 @@ public class keyword
             case "REG":
             case "Reg":
             case "reg":
-                return SMS.Registration(number, input);
+                return SMS.Registration(number, input, launcher_id);
             case "BAL":
             case "Bal":
             case "bal":

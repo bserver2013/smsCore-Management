@@ -16,60 +16,95 @@ public class SMS
 	}
 
     static SMSDataClassesDataContext db;
+    static objectList objList;
 
-    static string lastname = string.Empty;
-    static string Lastname
-    {
-        get { return lastname; }
-        set { lastname = value; }
-    }
-
-    static string firstname = string.Empty;
-    static string Firstname
-    {
-        get { return firstname; }
-        set { firstname = value; }
-    }
-
-    static string town = string.Empty;
-    static string Town
-    {
-        get { return town; }
-        set { town = value; }
-    }
-
-    static string sponsor = string.Empty;
-    static string Sponsor
-    {
-        get { return sponsor; }
-        set { sponsor = value; }
-    }
-
-    static string populate(string input)
+    static string populate(string input, string launcher_id)
     {
         string reg = input.Replace("REG ", "").Replace("Reg ", "").Replace("reg ", "");
+        if (launcher_id == "BMC062013")
+        {
+            return bmc_reg(reg);
+        }
+        return bayanihan_reg(reg);
+    }
+
+    internal static string bayanihan_reg(string input)
+    {
+        objList = new objectList();
+        string[] msg = input.Split('/');
+
         string code = string.Empty;
-        string[] msg = reg.Split('/');
         for (int i = 0; i < msg.Length; i++)
         {
+            objectName objName = new objectName();
+            objName.Group = "BAYANIHAN";
+            objName.Province = "N/A";
+            objName.Section_a = 0;
+            objName.Section_b = 0;
             switch (i)
             {
                 case 0:
-                    Lastname = msg[i];
+                    objName.Lastname = msg[i];
                     break;
                 case 1:
-                    Firstname = msg[i];
+                    objName.Firstname = msg[i];
                     break;
                 case 2:
-                    Town = msg[i];
+                    objName.Town = msg[i];
                     break;
                 case 3:
-                    Sponsor = msg[i];
+                    objName.Sponsor = msg[i];
                     break;
                 case 4:
+                    objName.Pin = msg[i];
                     code = msg[i];
                     break;
             }
+            objList.Add(objName);
+        }
+        return code;
+    }
+
+    internal static string bmc_reg(string input)
+    {
+        objList = new objectList();
+        string[] msg = input.Split('/');
+        string code = string.Empty;
+        for (int i = 0; i < msg.Length; i++)
+        {
+            objectName objName = new objectName();
+            switch (i)
+            {
+                case 0:
+                    objName.Group = msg[i];
+                    break;
+                case 1:
+                    objName.Lastname = msg[i];
+                    break;
+                case 2:
+                    objName.Firstname = msg[i];
+                    break;
+                case 3:
+                    objName.Town = msg[i];
+                    break;
+                case 4:
+                    objName.Province = msg[i];
+                    break;
+                case 5:
+                    objName.Sponsor = msg[i];
+                    break;
+                case 6:
+                    objName.Section_a = Convert.ToInt32(msg[i]);
+                    break;
+                case 7:
+                    objName.Section_b = Convert.ToInt32(msg[i]);
+                    break;
+                case 8:
+                    objName.Pin = msg[i];
+                    code = msg[i];
+                    break;
+            }
+            objList.Add(objName);
         }
         return code;
     }
@@ -131,7 +166,7 @@ public class SMS
         return reply;
     }
 
-    public static string Registration(string number, string input)
+    public static string Registration(string number, string input, string launcher_id)
     {
         db = new SMSDataClassesDataContext();
 
@@ -141,34 +176,41 @@ public class SMS
             return "OK";
         }
 
-        if (checkCode(populate(input)))
+        if (checkCode(populate(input, launcher_id)))
         {
-            string refCode = "CIA" + config.generateReferenceNo(4) + sqlServer.Count("SMS_Members", "ID") + DateTime.Now.Year;
+            string MemberName = string.Empty;
+            string refCode = "CIA" + number.Substring(1, 10) + "-" + DateTime.Now.Year + "-" + DateTime.Now.Month;
             SMS_Member m = new SMS_Member();
             m.ReferenceNo = refCode;
-            m.Group_Name = "BAYANIHAN";
-            m.Account_Number = number;
-            m.Family_Name = Lastname.ToUpper();
-            m.First_Name = Firstname.ToUpper();
-            m.Town = Town.ToUpper();
-            m.Sponsor_ID = Sponsor;
-            m.CP_Number = number;
+
+            foreach (var l in objList)
+            {
+                MemberName = l.Firstname;
+                m.Group_Name = l.Group;
+                m.Account_Number = number;
+                m.Family_Name = l.Lastname.ToUpper();
+                m.First_Name = l.Firstname.ToUpper();
+                m.Town = l.Town.ToUpper();
+                m.Province = l.Province.ToUpper();
+                m.Sponsor_ID = l.Sponsor;
+                m.CP_Number = number;
+                m.Section_A = (short)l.Section_a;
+                m.Section_B = (short)l.Section_b;
+                m.Pin_Code = l.Pin;
+            }
+
             m.DateReg = config.current_DateTime();
             m.Status = true;
             m.monthOf = DateTime.Now.Month;
             m.yearOf = DateTime.Now.Year;
 
-            SMS_eMoney e = new SMS_eMoney();
-            e.Account = number;
-            e.Amount = 100;
-            e.Status = true;
-
             try
             {
                 db.SMS_Members.InsertOnSubmit(m);
-                db.SMS_eMoneys.InsertOnSubmit(e);
                 db.SubmitChanges();
-                process.save(number, replyMessage("NREG", "OK", Firstname));
+
+                balance.Transaction(number, "CIA00001", 100, true, 25);
+                process.save(number, replyMessage("NREG", "OK", MemberName));
                 return "OK";
             }
             catch (Exception ex)

@@ -16,7 +16,7 @@ public class receivedMessage
 	}
 
     static SMSDataClassesDataContext db;
-    public static bool save(string number, string message, bool process_now = false)
+    public static bool save(string number, string message, string launcher_id, bool process_now = false)
     {
         db = new SMSDataClassesDataContext();
         SMS_Inbox inbox = new SMS_Inbox();
@@ -44,7 +44,7 @@ public class receivedMessage
 
             if (process_now)
             {
-                process.now();
+                process.now(launcher_id);
             }
 
             return true;
